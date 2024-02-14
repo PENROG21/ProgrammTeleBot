@@ -1,0 +1,58 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace WordCounter
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Ввод текста пользователем
+            Console.WriteLine("Введите текст:");
+            string text = Console.ReadLine();
+
+            // Разделители слов
+            char[] separators = new char[] { ' ', '.', ',', '!', '?', '(', ')', '\n', '\r', '\t' };
+
+            // Разделение текста на слова и удаление пустых значений
+            string[] words = text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
+            // Создание словаря для подсчета количества употреблений слов
+            Dictionary<string, int> wordCount = new Dictionary<string, int>();
+
+            // Подсчет количества употреблений каждого слова
+            foreach (string word in words)
+            {
+                // Получение слова в нижнем регистре
+                string lowerWord = word.ToLower();
+
+                // Если слово уже есть в словаре, увеличиваем счетчик на 1, иначе добавляем слово в словарь со значением 1
+                if (wordCount.ContainsKey(lowerWord))
+                {
+                    wordCount[lowerWord]++;
+                }
+                else
+                {
+                    wordCount[lowerWord] = 1;
+                }
+            }
+
+            // Сортировка словаря по убыванию количества употреблений
+            var sortedWordCount = wordCount.OrderByDescending(x => x.Value);
+
+            // Создание выходного файла и запись в него результата
+            using (StreamWriter writer = new StreamWriter("output.txt"))
+            {
+                foreach (var wordEntry in sortedWordCount)
+                {
+                    writer.WriteLine($"{wordEntry.Key}\t{wordEntry.Value}");
+                }
+            }
+
+            Console.WriteLine("Готово! Результаты сохранены в файле: output.txt");
+            Console.ReadLine();
+        }
+    }
+}
